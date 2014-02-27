@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+
+# taken from <http://puppetlabs.com/blog/git-workflow-and-puppet-environments>
+# Puppet Labs is a ruby shop, so why not do the post-receive hook in ruby?
+require 'fileutils'
+require 'net/ssh'
+
+PUPPET_SERVER = '<%= @puppet_server -%>'
+REMOTE_USER   = '<%= @remote_user -%>'
+
+# Set this to where you want to keep your environments
+ENVIRONMENT_BASEDIR = '<%= @remote_dir -%>'
+
+# post-receive hooks set GIT_DIR to the current repository. If you want to
+# clone from a non-local repository, set this to the URL of the repository,
+# such as git@git.host:puppet.git
+SOURCE_REPOSITORY = "<%= "#{@owner}@#{@fqdn}" -%>:#{File.expand_path(ENV['GIT_DIR'])}"
+
+# The git_dir environment variable will override the --git-dir, so we remove it
+# to allow us to create new repositories cleanly.
+ENV.delete('GIT_DIR')
+
+# open ssh connection
+begin
+  ssh=Net::SSH.start( PUPPET_SERVER, REMOTE_USER )
+rescue
+  puts "Couldn't ssh to #{$REMOTE_USER}@#{PUPPET_SERVER}"
+  exit -1
+end
+
+## Ensure that we have the underlying directories, otherwise the later commands
+## may fail in somewhat cryptic manners.
+if ssh.exec!("[ ! -d #{ENVIRONMENT_BASEDIR} ] && echo -n TRUE") == "TRUE" then
+  puts %Q{#{ENVIRONMENT_BASEDIR} does not exist, cannot create environment directories.}
+  exit 1
+end
+
+# You can push multiple refspecs at once, like 'git push origin branch1 branch2',
+# so we need to handle each one.
+$stdin.each_line do |line|
+  oldrev, newrev, refname = line.split(" ")
+
+  puts refname
+
+  # Determine the branch name from the refspec we're received, which is in the
+  # format refs/heads/, and make sure that it doesn't have any possibly
+  # dangerous characters
+  branchname = refname.sub(%r{^refs/heads/(.*$)}) { $1 }
+  if branchname =~ /[\W-]/
+    puts %Q{Branch "#{branchname}" contains non-word characters, ignoring it.}
+    next
+  end
+
+  environment_path = "#{ENVIRONMENT_BASEDIR}/#{branchname}"
+
+  if newrev =~ /^0+$/
+    # We've received a push with a null revision, something like 000000000000,
+    # which means that we should delete the given branch.
+    puts "Deleting existing environment #{branchname}"
+    puts ssh.exec!("[ -d #{environment_path} ] && rm -rf #{environment_path}")
+  else
+    # We have been given a branch that needs to be created or updated. If the
+    # environment exists, update it. Else, create it.
+
+    if ssh.exec!("[ -d #{environment_path} ] && echo -n TRUE") == 'TRUE'
+      # Update an existing environment. We do a fetch and then reset in the
+      # case that someone did a force push to a branch.
+
+      puts "Updating existing environment #{branchname}"
+      puts ssh.exec!("cd #{environment_path} && git fetch --all && git reset --hard \"origin/#{branchname}\"")
+    else
+      # Instantiate a new environment from the current repository.
+
+      puts "Creating new environment #{branchname}"
+      puts ssh.exec!("git clone #{SOURCE_REPOSITORY} #{environment_path} --branch #{branchname}")
+    end
+  end
+end
+
+ssh.close

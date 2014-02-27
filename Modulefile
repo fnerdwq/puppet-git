@@ -1,0 +1,8 @@
+name    'fnerdwq-git'
+version '0.0.1'
+source 'https://github.com/fnerdwq/puppet-git.git'
+author 'Frederik Wagner'
+license 'Apache License, Version 2.0'
+summary 'Puppet module for git'
+description 'Small git configuration module; creates puppet git repositories.'
+project_page 'https://github.com/fnerdwq/puppet-git'
