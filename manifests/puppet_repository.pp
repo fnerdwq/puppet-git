@@ -62,7 +62,7 @@ define git::puppet_repository (
     ensure  => directory,
     owner   => $owner,
     group   => $group,
-    mode    => '0640',
+    mode    => '0644',
     recurse => true,
   }
 
@@ -90,7 +90,7 @@ define git::puppet_repository (
     name    => "${name}/hooks/post-receive",
     owner   => $owner,
     group   => $group,
-    mode    => '0750',
+    mode    => '0755',
     content => template('git/post-receive.erb'),
     require => Exec["git init bare: ${name}"],
   }
