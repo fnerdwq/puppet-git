@@ -62,8 +62,6 @@ define git::puppet_repository (
     ensure  => directory,
     owner   => $owner,
     group   => $group,
-    mode    => '0644',
-    recurse => true,
   }
 
   exec {"git init bare: ${name}":
