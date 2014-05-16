@@ -21,7 +21,7 @@
 #
 # Copyright 2014 Frederik Wagner
 #
-class git {
+class git inherits git::params {
 
   contain git::install
 
