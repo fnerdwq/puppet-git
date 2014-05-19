@@ -5,9 +5,9 @@
 1. [Overview](#overview)
 2. [Module Description](#module-description)
 3. [Setup](#setup)
-    * [What Vim affects](#what-git-affects)
+    * [What git affects](#what-git-affects)
     * [Setup requirements](#setup-requirements)
-    * [Beginning with Vim](#beginning-with-Vim)
+    * [Beginning with git](#beginning-with-git)
 4. [Usage](#usage)
 5. [Limitations](#limitations)
 6. [TODOs](#TODOs)
@@ -27,7 +27,7 @@ See [Overview](#overview) for now.
 
 ##Setup
 
-###What Vim affects
+###What git affects
 
 * git :-) 
 
@@ -35,7 +35,7 @@ See [Overview](#overview) for now.
 
 Be sure to exchange corresponding ssh keys, if you create a puppet repository.
 	
-###Beginning with Vim	
+###Beginning with git	
 
 Simply include it to install git. Or see [Usage](#usage) for puppet repository.
 
