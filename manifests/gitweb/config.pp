@@ -1,9 +1,9 @@
 # configures gitweb (private)
-class git::gitweb::config (
-  $projectroot = $git::params::gitweb_projectroot,
-) {
+class git::gitweb::config {
 
-  file {'/etc/gitweb.conf':
+  $projectroot = $git::gitweb::projectroot
+
+  file { '/etc/gitweb.conf':
     ensure  => present,
     owner   => root,
     group   => root,

@@ -30,7 +30,7 @@
 #
 # === Examples
 #
-# include git
+# include git::gitweb
 #
 # === Authors
 #
@@ -41,20 +41,16 @@
 # Copyright 2014 Frederik Wagner
 #
 class git::gitweb (
-  $projectroot = $git::params::gitweb_projectroot
-) {
+  $projectroot = $git::gitweb::params::projectroot
+) inherits git::gitweb::params {
 
-  if ! defined(Class['git']) {
-    fail('You must include the git base class before using gitweb')
-  }
-
-  Class['git'] -> Class['gitweb']
+  include git
 
   contain git::gitweb::install
+  contain git::gitweb::config
 
-  Class ['git::gitweb::install']
-  -> class {'git::gitweb::config':
-    projectroot => $projectroot
-  }
+  Class['git'] ->
+  Class['git::gitweb::install'] ->
+  Class['git::gitweb::config']
 
 }
