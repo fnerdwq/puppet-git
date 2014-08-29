@@ -2,7 +2,11 @@
 class git::gitweb::config {
 
   $projectroot                    = $git::gitweb::projectroot
-  $git_base_url_list              = any2array($git::gitweb::git_base_url_list)
+  if $git::gitweb::git_base_url_list {
+    $git_base_url_list            = any2array($git::gitweb::git_base_url_list)
+  } else {
+    $git_base_url_list            = undef
+  }
   $projects_list_group_categories = $git::gitweb::projects_list_group_categories
 
   file { '/etc/gitweb.conf':
