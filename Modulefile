@@ -6,3 +6,5 @@ license 'Apache License, Version 2.0'
 summary 'Puppet module for git'
 description 'Small git configuration module; creates puppet git repositories.'
 project_page 'https://github.com/fnerdwq/puppet-git'
+
+dependency 'puppetlabs/stdlib', '>= 4.0.0'
