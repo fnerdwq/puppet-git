@@ -41,7 +41,9 @@
 # Copyright 2014 Frederik Wagner
 #
 class git::gitweb (
-  $projectroot = $git::gitweb::params::projectroot
+  $projectroot                    = $git::gitweb::params::projectroot,
+  $git_base_url_list              = $git::gitweb::params::git_base_url_list,
+  $projects_list_group_categories = $git::gitweb::params::projects_list_group_categories,
 ) inherits git::gitweb::params {
 
   include git

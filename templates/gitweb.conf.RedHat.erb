@@ -53,3 +53,10 @@ our $projectroot = "<%= @projectroot -%>";
 # Allow projects to override the default setting via git config file.
 # Example: gitweb.pickaxe = 0|1;
 #$feature{'pickaxe'}{'override'} = 1;
+
+<% if @git_base_url_list -%>
+@git_base_url_list=qw(<%= url.join(" ") -%>);
+<% end -%>
+<% if @projects_list_group_categories -%>
+$projects_list_group_categories = 1;
+<% end -%>
